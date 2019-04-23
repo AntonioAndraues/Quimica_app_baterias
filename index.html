@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Page Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+
+        /* Style the header */
+        .header {
+            padding: 80px;
+            text-align: center;
+            background: #ffffff;
+            color: rgb(0, 0, 0);
+        }
+
+        /* Increase the font size of the h1 element */
+        .header h1 {
+            font-size: 40px;
+        }
+
+        /* Style the top navigation bar */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        /* Style the navigation bar links */
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        /* Right-aligned link */
+        .navbar a.right {
+            float: right;
+        }
+
+        /* Change color on hover */
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Select css para metais */
+        .form-control {}
+
+        #displayPerguntas {
+            display: none;
+        }
+
+        #metaisformdiv {
+            display: block;
+        }
+
+        #confirm_inputs {
+            display: none;
+        }
+
+        #respostas {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+
+
+
+    </script>
+    <div class="header">
+        <h1>Baterias Montar</h1>
+        <p>Preencha o form abaixo e tenha sua bateria montada</p>
+    </div>
+    <div class="navbar">
+        <a href="#">Montar</a>
+        <a href="/selecionar.html">Selecionar</a>
+
+    </div>
+    <div id="metaisformdiv">
+        <p>Escolha o primeiro metal:
+            <select class="form-control" id="metaisform" name="metaisform">
+                <option value="Cobre">Cobre</option>
+                <option value="Niquel">Niquel</option>
+                <option value="Zinco">Zinco</option>
+                <option value="Chumbo">Chumbo</option>
+                <option value="Ferro">Ferro</option>
+
+            </select>
+            <p>Escolha o segundo metal:
+                <select class="form-control" id="metaisform2" name="metaisform2">
+                    <option value="Cobre">Cobre</option>
+                    <option value="Niquel">Niquel</option>
+                    <option value="Zinco">Zinco</option>
+                    <option value="Chumbo">Chumbo</option>
+                    <option value="Ferro">Ferro</option>
+
+                </select>
+                <button onclick="metaisfunction()">Registrar metal</button>
+    </div>
+    <div class="solucoes" id="displaySolucoes"></div>
+    <div class="PerguntaSolucoes" id="displayPerguntas">
+        <p>Qual a solucao da primeira solucao ?:
+            <input type="number" id="concentracao1" name="concentracao1" min="0" placeholder="exemplo: 1.5 ou 0.6">
+        </p>
+        <p>Qual a solucao da segunda solucao ?:
+            <input type="number" id="concentracao2" name="concentracao2" min="0" placeholder="exemplo: 1.5 ou 0.6">
+        </p>
+        <p>Temperatura de funcionamento?:
+            <input type="number" id="temperatura" name="temperatura" min="0" placeholder="exemplo: 24 ou 5.5">
+        </p>
+        <button onclick="solucao()">Registrar Solução</button>
+
+    </div>
+    <div id="confirm_inputs">
+
+        <p id="metais"></p>
+        <p id="solucoes"></p>
+        <p id="concrentracoes"></p>
+        <p id="temperatura_input"></p>
+        <button onclick="calcular()">Montar Pilha</button>
+
+
+    </div>
+    <div id="respostas">
+        <label id="respostas_css">DDP da pilha :</label><br>
+        <p id="DDP"></p>
+        <label id="respostas_css">Capacidade carga : </label><br>
+        <p id="Capacidade_carga"></p>
+        <label id="respostas_css">Densidade energia : </label><br>
+        <p id="Densidade_energia"></p>
+        <label id="respostas_css">Densidade carga : </label><br>
+        <p id="Densidade_carga"></p>
+        <label id="respostas_css">Custo estimado da pilha : </label><br>
+        <p id="Custo"></p>
+
+    </div>
+
+    <script>
+
+        function ddp(temp,C1,C2,reagente1, reagente2) {
+            const R = 2.303;
+            const F = 96490;
+            if(reagente1.name==reagente2.name){
+                alert("Pilha de concentração em produção (Reload a pagina e selecione metais diferentes) ");
+            }
+            if(reagente1.potRed>reagente2.potRed){
+                var ddpInit = reagente1.potRed - reagente2.potRed;
+            }else{
+                var ddpInit = reagente2.potRed - reagente1.potRed;
+            }
+            
+
+            const eletrons = reagente1.ele * reagente2.ele;
+            var ddp = ddpInit - (((R * (temp + 273,15)) / (eletrons * F)) * Math.log(((C1) ** (reagente2.ele)) / ((C2) ** (reagente1.ele))));
+
+            return ddp;
+        }
+
+
+        function capCarga(n) {
+            const C = 9.65 * 10 ** 4;
+
+            return (C * n) / 3600;
+        }
+
+        function tempoDeUso(capCarga, amperUso) {
+            return capCarga / amperUso;
+        }
+
+        function densEnerg(ddp, mols){
+            
+            const P = ddp * (mols*96490);
+            const V = 20 ;
+
+            return (P) / V;
+        }
+
+        function densCarga(capCarga) {
+            const V = 20 ;
+
+            return capCarga / V;
+        }
+
+        var getMetal1;
+        var getMetal2;
+        var solucao_C1;
+        var solucao_C2;
+        var temperatura;
+        function metaisfunction() {
+            var selector1 = document.getElementById('metaisform');
+            var metal1 = selector1[selector1.selectedIndex].value;
+            var selector2 = document.getElementById('metaisform2');
+            var metal2 = selector2[selector2.selectedIndex].value;
+
+            const metais_possiveis = [
+                { name: 'Cobre', substancias: ["CuSO4"], preco: 6445, ele: 2, redox: { 'Cu2+': 1, 'e-': 2 }, ox: { 'Cu': 1 }, potRed: 0.337 },
+                { name: 'Niquel', substancias: ["Ni(OH)2"], preco: 12628, ele: 1, redox: { 'Ni2+': 1, 'e-': 2 }, ox: { 'Ni': 1 }, potRed: -0.25 },
+                { name: 'Zinco', substancias: ["Zn(NO3)2"], preco: 2628, ele: 2, redox: { 'Zn2+': 1, 'e-': 2 }, ox: { 'Zn': 1 }, potRed: -0.763 },
+                { name: 'Chumbo', substancias: ["Pb(NO3)2"], preco: 1928, ele: 1, redox: { 'Pb2+': 1, 'e-': 2 }, ox: { 'Pb': 1 }, potRed: -0.126 },
+                { name: 'Ferro', substancias: ["FeCl3"], preco: 93, ele: 3, redox: { 'Fe3+': 1, 'e-': 3 }, ox: { 'Fe': 1 }, potRed: -0.04 }
+            ];
+            getMetal1 = metais_possiveis.find(possivel_metal => possivel_metal.name === metal1);
+            getMetal2 = metais_possiveis.find(possivel_metal => possivel_metal.name === metal2);
+            const stringSolucoes = "Suas solucoes para tais metais foram limitadas a estas duas:\n " + getMetal1.substancias + " e " + getMetal2.substancias;
+            document.getElementById('displaySolucoes').innerHTML = stringSolucoes;
+            document.getElementById('metaisformdiv').style.display = "none";
+            document.getElementById('displayPerguntas').style.display = "block";
+        }
+        function solucao() {
+            solucao_C1 = parseFloat(document.getElementById("concentracao1").value);
+            solucao_C2 = parseFloat(document.getElementById("concentracao2").value);
+            temperatura = parseFloat(document.getElementById("temperatura").value);
+            const metais_possiveis = [
+                { name: 'Cobre', substancias: ["CuSO4"], preco: 6445, ele: 2, redox: { 'Cu2+': 1, 'e-': 2 }, ox: { 'Cu': 1 }, potRed: "0.337" , massMol: 635460},
+                { name: 'Niquel', substancias: ["Ni(OH)2"], preco: 12628, ele: 2, redox: { 'Ni2+': 1, 'e-': 2 }, ox: { 'Ni': 1 }, porRed: "-0.25" , massMol: 58.69340},
+                { name: 'Zinco', substancias: ["Zn(NO3)2"], preco: 2628, ele: 2, rtempoedox: { 'Zn2+': 1, 'e-': 2 }, ox: { 'Zn': 1 }, potRed: "-0.763" , massMol: 65.3800},
+                { name: 'Chumbo', substancias: ["Pb(NO3)2"], preco: 1928, ele: 2, redox: { 'Pb2+': 1, 'e-': 2 }, ox: { 'Pb': 1 }, potRed: "-0.126", massMol : 207.2000 },
+                { name: 'Ferro', substancias: ["FeCl3"], preco: 93, ele: 3, redox: { 'Fe3+': 1, 'e-': 3 }, ox: { 'Fe': 1 }, potRed: "-0.04", massMol : 55.8450 },
+                
+                { name: 'Cromo', substancias: ["CrCl3"], preco: 19560, ele: 3, redox: { 'Cr3+': 1, 'e-': 3 }, ox: { 'Cr': 1 }, potRed: "-0.74", massMol : 51.9961 },
+                { name: 'Sodio', substancias: ["Na(OH)"], preco: 90, ele: 1, redox: { 'Na+': 1, 'e-': 1 }, ox: { 'Na': 1 }, potRed: "-2.714", massMol : 22.989769 },
+                { name: 'Cobalto', substancias: ["Co(NO3)2"], preco: 35500, ele: 2, redox: { 'Co2+': 1, 'e-': 2 }, ox: { 'Co': 1 }, potRed: "-0.28", massMol : 58.933195 },
+                { name: 'Calcio', substancias: ["CaCl2"], preco: 200000, ele: 2, redox: { 'Ca2+': 1, 'e-': 2 }, ox: { 'Ca': 1 }, potRed: "-2.87", massMol : 40.078 },
+                { name: 'Estanho', substancias: ["SnCl2"], preco: 1928, ele: 2, redox: { 'Sn2+': 1, 'e-': 2 }, ox: { 'Sn': 1 }, potRed: "-0.14", massMol : 118.71 }
+            ];
+            document.getElementById('displayPerguntas').style.display = "none";
+            document.getElementById('displaySolucoes').style.display = "none";
+            console.log(solucao_C1);
+            console.log(solucao_C2);
+            document.getElementById('metais').innerHTML = "Metais selecionados: \n" + getMetal1.name + " e " + getMetal2.name;
+            document.getElementById('solucoes').innerHTML = "Substancias selecionadas: \n" + getMetal1.substancias + " e " + getMetal2.substancias;
+            document.getElementById('concrentracoes').innerHTML = "Concentrações : \n" + + solucao_C1 + "\n e " + solucao_C1;
+            document.getElementById('temperatura_input').innerHTML = "Temperatura : \n"+ temperatura;
+
+            document.getElementById('confirm_inputs').style.display = "block";
+            console.log(capCarga(5));
+
+        }
+        function calcular() {
+            document.getElementById('confirm_inputs').style.display = "none";
+            document.getElementById('respostas').style.display = "block";
+            const ddpVar = ddp(temperatura,solucao_C1,solucao_C2, getMetal1,getMetal2);
+            const capCargaVar = capCarga((getMetal1.ele * getMetal2.ele));
+            const round=2;
+            const gramas=1;
+            document.getElementById('DDP').innerHTML = parseFloat(ddpVar).toFixed(round);
+            document.getElementById('Capacidade_carga').innerHTML = parseFloat(capCargaVar).toFixed(round);
+            document.getElementById('Densidade_energia').innerHTML =parseFloat(densEnerg(ddpVar,(getMetal1.ele * getMetal2.ele))).toFixed(round);
+            document.getElementById('Densidade_carga').innerHTML = parseFloat(densCarga(capCargaVar)).toFixed(round);
+            document.getElementById('Custo').innerHTML = parseFloat((getMetal1.preco/1000+getMetal2.preco/1000)*gramas).toFixed(round);
+            
+        }
+
+
+    </script>
+</body>
+
+</html>

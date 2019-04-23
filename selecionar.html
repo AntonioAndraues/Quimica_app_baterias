@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Page Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+
+        /* Style the header */
+        .header {
+            padding: 80px;
+            text-align: center;
+            background: #ffffff;
+            color: rgb(0, 0, 0);
+        }
+
+        /* Increase the font size of the h1 element */
+        .header h1 {
+            font-size: 40px;
+        }
+
+        /* Style the top navigation bar */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        /* Style the navigation bar links */
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        /* Right-aligned link */
+        .navbar a.right {
+            float: right;
+        }
+
+        /* Change color on hover */
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Select css para metais */
+        .form-control {}
+
+        #displayPerguntas {
+            display: none;
+        }
+
+        #metaisformdiv {
+            display: block;
+        }
+
+        #confirm_inputs {
+            display: none;
+        }
+
+        #respostas {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Baterias Selecionar</h1>
+        <p>Preencha o form abaixo e tenha uma bateria selecionada</p>
+    </div>
+    <div class="navbar">
+        <a href="/index.html">Montar</a>
+        <a href="#">Selecionar</a>
+    </div>
+    <div id="metaisformdiv">
+        <p>Forneca a DDP (em volts):
+            <input type="number" id="DDP" name="DDP" min="0" placeholder="exemplo: 3 ou 0.5">
+        </p>
+        <p>Tempo que vai ficar ligado (em horas):
+            <input type="number" id="TEMPO" name="TEMPO" min="0" placeholder="exemplo: 5 ou 0.5">
+        </p>
+        <p>E a potencia da bateria (W):
+            <input type="number" id="POTENCIA" name="POTENCIA" min="0" placeholder="exemplo: 20 ou 0.6">
+        </p>
+        <button onclick="SelecionaMain()">Selecione uma Pilha</button>
+
+        <script>
+            function SelecionaMain() {
+                DDP = parseFloat(document.getElementById("DDP").value);
+                TEMPO = parseFloat(document.getElementById("TEMPO").value);
+                POTENCIA = parseFloat(document.getElementById("POTENCIA").value);
+                const pilhas_possiveis = [
+                    { name: 'Alcalina 6LF22', voltagem: 9.0, capacidade: 320, preco: 8.09 },
+                    { name: 'Alcalina 23A', voltagem: 12.0, capacidade: 52, preco: 5.36 },
+                    { name: 'Bateria Ep12-1.3 Expower', voltagem: 12.0, capacidade: 1300, preco: 34.00 },
+                    { name: 'Lithium CR2032', voltagem: 3.0, capacidade: 220, preco: 3.20 },
+                    { name: 'Ni-CD 2/3 AAA', voltagem: 1.2, capacidade: 170, preco: 3.20 },
+                    { name: 'Bateria 2/3aa', voltagem: 1.2, capacidade: 300, preco: 6.0 },
+                    { name: 'Bateria Aa Ni-mh', voltagem: 9.6, capacidade: 2200, preco: 60.0 },
+                    { name: 'Bateria Sc Ni-mh', voltagem: 1.2, capacidade: 3000, preco: 29.0}
+                ];
+                function cal_corrente(ddp,potencia) {
+                    return potencia / ddp;
+                }
+                const corrente=cal_corrente(DDP,POTENCIA);
+                const capacidade_user=corrente*TEMPO*1000;
+                // alert(capacidade_user);
+                var preco_mais_barato=99999999;
+                var indice_referencia;
+                function find_ddp_capacidade(capacidade_user,ddp){
+                    for (let index = 0; index < pilhas_possiveis.length; index++) {
+                        const element = pilhas_possiveis[index];
+                        var dif_ddp=ddp/element.voltagem;
+                        var dif_cap=capacidade_user/element.capacidade;
+                        
+                                //element.voltagem+=element.voltagem;
+                        dif_ddp=ddp/element.voltagem;
+
+                        
+                        
+
+                        //while(dif_cap>1){
+                           // element.capacidade+=element.capacidade;
+                        dif_cap=capacidade_user/element.capacidade;
+                        // }
+                        const baterias=Math.ceil(dif_ddp)+Math.ceil(dif_cap);
+                        // alert(baterias);
+                        if(preco_mais_barato>(baterias*element.preco)){
+                            preco_mais_barato=element.preco*baterias;
+                            indice_referencia=index;
+                        }
+                        // alert(Math.ceil(dif_ddp));
+                        // alert(Math.ceil(dif_cap));
+                        
+
+                    }
+                    alert(pilhas_possiveis[indice_referencia].name);
+                }
+                find_ddp_capacidade(capacidade_user,DDP);
+
+            }
+        </script>
+</body>
+
+</html>
