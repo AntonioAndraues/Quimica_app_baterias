@@ -72,7 +72,13 @@
         #respostas {
             display: none;
         }
+
+        #respostas2 {
+            display: none;
+        }
     </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 
 <body>
@@ -95,63 +101,146 @@
             <input type="number" id="POTENCIA" name="POTENCIA" min="0" placeholder="exemplo: 20 ou 0.6">
         </p>
         <button onclick="SelecionaMain()">Selecione uma Pilha</button>
+    </div>
 
-        <script>
-            function SelecionaMain() {
-                DDP = parseFloat(document.getElementById("DDP").value);
-                TEMPO = parseFloat(document.getElementById("TEMPO").value);
-                POTENCIA = parseFloat(document.getElementById("POTENCIA").value);
-                const pilhas_possiveis = [
-                    { name: 'Alcalina 6LF22', voltagem: 9.0, capacidade: 320, preco: 8.09 },
-                    { name: 'Alcalina 23A', voltagem: 12.0, capacidade: 52, preco: 5.36 },
-                    { name: 'Bateria Ep12-1.3 Expower', voltagem: 12.0, capacidade: 1300, preco: 34.00 },
-                    { name: 'Lithium CR2032', voltagem: 3.0, capacidade: 220, preco: 3.20 },
-                    { name: 'Ni-CD 2/3 AAA', voltagem: 1.2, capacidade: 170, preco: 3.20 },
-                    { name: 'Bateria 2/3aa', voltagem: 1.2, capacidade: 300, preco: 6.0 },
-                    { name: 'Bateria Aa Ni-mh', voltagem: 9.6, capacidade: 2200, preco: 60.0 },
-                    { name: 'Bateria Sc Ni-mh', voltagem: 1.2, capacidade: 3000, preco: 29.0}
-                ];
-                function cal_corrente(ddp,potencia) {
-                    return potencia / ddp;
+    <div class="container" id="respostas">
+        <div class="row">
+            <div class="col-sm">
+                <p id="respostas_css">Nome da melhor pilha: </p>
+                <p id="DDP1"></p>
+                <p id="respostas_css">Capacidade carga de uma pilha: </p>
+                <p id="Capacidade_carga"></p>
+                <p id="respostas_css">Voltagem padrao de uma pilha: </p>
+                <p id="Voltagem"></p>
+                <p id="respostas_css">Custo estimado da pilha : </p>
+                <p id="Custo"></p>
+            </div>
+            <div class="col-sm">
+                <p id="respostas_css">Segunda melhor :</p>
+                <p id="DDP2"></p>
+                <p id="respostas_css">Capacidade carga de uma pilha: </p>
+                <p id="Capacidade_carga2"></p>
+                <p id="respostas_css">Voltagem padrao de uma pilha: </p>
+                <p id="Voltagem2"></p>
+                <p id="respostas_css">Custo estimado da pilha : </p>
+                <p id="Custo2"></p>
+
+            </div>
+            <div class="col-sm">
+                <p id="respostas_css">Terceira pilha :</p>
+                <p id="DDP3"></p>
+                <p id="respostas_css">Capacidade carga de uma pilha: </p>
+                <p id="Capacidade_carga3"></p>
+                <p id="respostas_css">Voltagem padrao de uma pilha: </p>
+                <p id="Voltagem3"></p>
+                <p id="respostas_css">Custo estimado da pilha : </p>
+                <p id="Custo3"></p>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var pilhas_possiveis = [
+            { name: 'Alcalina 6LF22', voltagem: 9.0, capacidade: 320, preco: 8.09 },
+            { name: 'Alcalina 23A', voltagem: 12.0, capacidade: 52, preco: 5.36 },
+            { name: 'Bateria Ep12-1.3 Expower', voltagem: 12.0, capacidade: 1300, preco: 34.00 },
+            { name: 'Lithium CR2032', voltagem: 3.0, capacidade: 220, preco: 3.20 },
+            { name: 'Ni-CD 2/3 AAA', voltagem: 1.2, capacidade: 170, preco: 3.20 },
+            { name: 'Bateria 2/3aa', voltagem: 1.2, capacidade: 300, preco: 6.0 },
+            { name: 'Bateria Aa Ni-mh', voltagem: 9.6, capacidade: 2200, preco: 60.0 },
+            { name: 'Bateria Sc Ni-mh', voltagem: 1.2, capacidade: 3000, preco: 29.0 }
+        ];
+        function SelecionaMain() {
+            DDP = parseFloat(document.getElementById("DDP").value);
+            TEMPO = parseFloat(document.getElementById("TEMPO").value);
+            POTENCIA = parseFloat(document.getElementById("POTENCIA").value);
+            function cal_corrente(ddp, potencia) {
+                return potencia / ddp;
+            }
+            const corrente = cal_corrente(DDP, POTENCIA);
+            const capacidade_user = corrente * TEMPO * 1000;
+            // alert(capacidade_user);
+            var preco_mais_barato = 9999999;
+            var indice_referencia;
+            var lista = [];
+            var listapreco = [];
+            function find_ddp_capacidade(capacidade_user, ddp) {
+                for (let index = 0; index < pilhas_possiveis.length; index++) {
+                    const element = pilhas_possiveis[index];
+                    var dif_ddp = ddp / element.voltagem;
+                    var dif_cap = capacidade_user / element.capacidade;
+
+                    //element.voltagem+=element.voltagem;
+                    dif_ddp = ddp / element.voltagem;
+                    // alert(dif_ddp);
+
+
+
+
+                    //while(dif_cap>1){
+                    // element.capacidade+=element.capacidade;
+                    dif_cap = capacidade_user / element.capacidade;
+                    // }
+                    const baterias = Math.ceil(dif_ddp) + Math.ceil(dif_cap);
+                    const preco = element.preco * baterias;
+                    listapreco.push(Math.ceil(preco));
+                    
                 }
-                const corrente=cal_corrente(DDP,POTENCIA);
-                const capacidade_user=corrente*TEMPO*1000;
-                // alert(capacidade_user);
-                var preco_mais_barato=99999999;
-                var indice_referencia;
-                function find_ddp_capacidade(capacidade_user,ddp){
-                    for (let index = 0; index < pilhas_possiveis.length; index++) {
-                        const element = pilhas_possiveis[index];
-                        var dif_ddp=ddp/element.voltagem;
-                        var dif_cap=capacidade_user/element.capacidade;
-                        
-                                //element.voltagem+=element.voltagem;
-                        dif_ddp=ddp/element.voltagem;
-
-                        
-                        
-
-                        //while(dif_cap>1){
-                           // element.capacidade+=element.capacidade;
-                        dif_cap=capacidade_user/element.capacidade;
-                        // }
-                        const baterias=Math.ceil(dif_ddp)+Math.ceil(dif_cap);
-                        // alert(baterias);
-                        if(preco_mais_barato>(baterias*element.preco)){
-                            preco_mais_barato=element.preco*baterias;
-                            indice_referencia=index;
-                        }
-                        // alert(Math.ceil(dif_ddp));
-                        // alert(Math.ceil(dif_cap));
-                        
-
-                    }
-                    alert(pilhas_possiveis[indice_referencia].name);
-                }
-                find_ddp_capacidade(capacidade_user,DDP);
+                // alert(Math.ceil(dif_ddp));
+                // alert(Math.ceil(dif_cap));
 
             }
-        </script>
+            console.log(listapreco);
+            var valorminimo=0;
+            var lista2=[];
+            for (let index = 0; index < listapreco.length; index++) {
+                const element = listapreco[index];
+                if(valorminimo<=element){
+                    valorminimo=element;
+                    lista2.push(valorminimo);
+                }
+
+            }
+            console.log(lista2);
+            
+            find_ddp_capacidade(capacidade_user, DDP);
+            
+            const name1 = pilhas_possiveis[lista.pop()].name;
+            const name2 = pilhas_possiveis[lista.pop()].name;
+            const name3 = pilhas_possiveis[lista.pop()].name;
+            document.getElementById('metaisformdiv').style.display = "none";
+            document.getElementById('respostas').style.display = "block";
+            const primeiraopcao = pilhas_possiveis.find(possivel_pilha => possivel_pilha.name === name1);
+            const segundaopcao = pilhas_possiveis.find(possivel_pilha => possivel_pilha.name === name2);
+            const terceiraopcao = pilhas_possiveis.find(possivel_pilha => possivel_pilha.name === name3);
+            document.getElementById('DDP1').innerHTML = primeiraopcao.name;
+            document.getElementById('DDP2').innerHTML = segundaopcao.name;
+            document.getElementById('DDP3').innerHTML = terceiraopcao.name;
+            document.getElementById('Capacidade_carga').innerHTML = primeiraopcao.capacidade;
+            document.getElementById('Capacidade_carga2').innerHTML = segundaopcao.capacidade;
+            document.getElementById('Capacidade_carga3').innerHTML = terceiraopcao.capacidade;
+            document.getElementById('Voltagem').innerHTML = primeiraopcao.voltagem;
+            document.getElementById('Voltagem2').innerHTML = segundaopcao.voltagem;
+            document.getElementById('Voltagem3').innerHTML = terceiraopcao.voltagem;
+            document.getElementById('Custo').innerHTML = listapreco.pop();
+            document.getElementById('Custo2').innerHTML = listapreco.pop();
+            document.getElementById('Custo3').innerHTML = listapreco.pop();
+
+
+
+
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
